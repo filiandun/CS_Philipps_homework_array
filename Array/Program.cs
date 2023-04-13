@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata.Ecma335;
 
 /*
 1. Сжать массив, удалив из него все 0 и, заполнить освободившиеся справа элементы значениями –1
@@ -30,24 +29,20 @@ namespace Array
                 Console.Write($"{array[i]} ");
             }
 
-            int buf = 0;
             for (int i = 0; i < SIZE; ++i)
             {
-                if (i + 2 <= SIZE && (array[i] == 0 || buf > 0))
+                if (array[i] == 0) 
                 {
-                    array[i] = array[i + 1];
-                    ++buf;
-
+                    for (int j = i; j < SIZE - 1; ++j)
+                    {
+                        array[j] = array[j + 1];
+                        array[j + 1] = -1;
+                    }
+                    i--; // нужно для того, чтобы в случае массива, в котором нули идут подряд, он их не пропустил
                 }
             }
 
-            Console.Write($"\nB: {buf}");
             Console.Write("\nСжатый массив:   ");
-            for (int i = SIZE - buf - 1; i < SIZE; ++i)
-            {
-                array[i] = -1;
-            }
-
             for (int i = 0; i < SIZE; ++i)
             {
                 Console.Write($"{array[i]} ");
@@ -56,10 +51,42 @@ namespace Array
 
 
 
+
         static void Function2()
         {
             var randomNum = new Random();
+
+            const int SIZE = 15;
+            int[] array = new int[SIZE];
+            int temp;
+
+            Console.Write("Исходный массив: ");
+            for (int i = 0; i < SIZE; ++i)
+            {
+                array[i] = randomNum.Next(-9, 9);
+                Console.Write($"{array[i]} ");
+            }
+
+            for (int i = 0; i < SIZE; ++i)
+            {
+                for (int j = 0; j < SIZE - i - 1; ++j)
+                {
+                    if (array[j] > array[j + 1])
+                    {
+                        temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+                    }
+                }
+            }
+
+            Console.Write("\nОтсортированный массив: ");
+            for (int i = 0; i < SIZE; ++i)
+            {
+                Console.Write($"{array[i]} ");
+            }
         }
+
 
 
 
@@ -71,7 +98,7 @@ namespace Array
             int[] array = new int[SIZE];
 
             int userNumber;
-            int result = 0;
+            int count = 0;
 
             Console.Write("Введите число: ");
             userNumber = Convert.ToInt32(Console.ReadLine());
@@ -87,11 +114,12 @@ namespace Array
             {
                 if (array[i] == userNumber)
                 {
-                    ++result;
+                    ++count;
                 }
             }
-            Console.Write($"\n\nЧисло {userNumber} повторяется в массиве {result} раз(-а)");
+            Console.Write($"\n\nЧисло {userNumber} повторяется в массиве {count} раз(-а)");
         }
+
 
 
 
@@ -101,7 +129,8 @@ namespace Array
 
             const int SIZE = 5;
             int[,] array = new int[SIZE, SIZE];
-            int[] arrayTemp = new int[SIZE];
+
+            int temp;
 
             int row1;
             int row2;
@@ -114,7 +143,6 @@ namespace Array
                 {
                     array[i, j] = randomNum.Next(0, 10);
                     Console.Write($"{array[i, j]} ");
-
                 }
                 Console.WriteLine();
             }
@@ -125,32 +153,24 @@ namespace Array
             Console.Write("Введите номер второй строки: ");
             row2 = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("\nИзмённый массив: ");
             --row1; --row2;
             for (int i = 0; i < SIZE; ++i)
             {
-                Console.Write("    ");
                 for (int j = 0; j < SIZE; ++j)
                 {
-                    arrayTemp[j] = array[row1, j];
+                    temp = array[row1, j];
                     array.SetValue(array.GetValue(row2, j), row1, j);
-                    //array[row1, j] = array[row2, j];
-                    array[row2, j] = arrayTemp[j];
-                    /*
-                     * ЕСЛИ ВЫВОДИТЬ СРАЗУ ТУТ МАССИВ, ТО ОН ВЫВОДИТ С НЕИЗМЕНЁННОЙ ВТОРОЙ СТРОКОЙ 
+                    array.SetValue(temp, row2, j);
+
+                    /* Console.Write($"{array[i, j]} ");
+                     * ЕСЛИ ВЫВОДИТЬ СРАЗУ ТУТ МАССИВ, ТО ОН ВЫВОДИТСЯ С НЕИЗМЕНЁННОЙ ВТОРОЙ СТРОКОЙ 
                      * ЕСЛИ ПОТОМ ОТДЕЛЬНО В ЦИКЛЕ, ТО ВСЁ НОРМАЛЬНО
                      * МОЖЕТ НУЖНО ПОИГРАТЬСЯ С GETVALUE И SETVALUE, ТАК КАК МНОГОМЕРНЫЙ МАССИВ - ЭТО ОБЪЕКТ КЛАССА ARRAY
-                     * 
-                     * 
-                     */
-
-                    Console.Write($"{array[i, j]} ");
+                    */
                 }
-                Console.WriteLine();
             }
 
-
-            Console.WriteLine("\nВременный массив: ");
+            Console.WriteLine("\nИзменённый массив: ");
             for (int i = 0; i < SIZE; i++)
             {
                 Console.Write("    ");
@@ -166,13 +186,10 @@ namespace Array
 
         static void Main()
         {
-            //Function1();
+            Function1();
             //Function2();
-            //Function3(); // сделано
-            Function4(); // почти
-
-
-
+            //Function3();
+            //Function4();
         }
     }
 }
